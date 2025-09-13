@@ -15,10 +15,3 @@ python3 -m server
 docker build -t chat-server .
 docker run -p 5000:5000 chat-server
 ```
-
-## Changelog
-### 2025-08-24
-Hilariously minimal. Open for development.
-
-### 2025-08-27
-Added kick and list commands.
