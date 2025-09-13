@@ -1,7 +1,7 @@
 import logging
 from typing import Final
 
-HOST: Final[str] = "127.0.0.1"
+HOST: Final[str] = "0.0.0.0"
 PORT: Final[int] = 5000
 
 ADMIN_IPS: Final[list[str]] = []
