@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+from server import bans
 from server.commands.admin import handle_ban, handle_kick, handle_unban
 from server.commands.core import (
     handle_identify,
@@ -9,13 +10,15 @@ from server.commands.core import (
     handle_whisper,
 )
 from server.config import HOST, PORT
-from server.helpers.utils import broadcast_message, convert_to_message
-from server.variables import bans, clients
+from server.entities.client import registry
+from server.helpers.utility import broadcast_message, convert_to_message
 
 
 async def callback(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
     addr: tuple[str, int] = writer.get_extra_info("peername")
     if addr[0] in bans:
+        writer.close()
+        await writer.wait_closed()
         return
 
     logging.info(f"New connection from {addr}")
@@ -49,7 +52,7 @@ async def callback(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
 
     finally:
         already_closing = writer.is_closing()
-        client = clients.pop(writer, None)
+        client = registry.remove(writer)
 
         if client:
             await broadcast_message(f"CLIENT_LEAVE|{client.nickname}")

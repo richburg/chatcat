@@ -1,9 +1,9 @@
 from asyncio import StreamWriter
 from typing import Callable
 
-from server.helpers.utils import write
-from server.types import Message
-from server.variables import clients
+from server.entities.client import registry
+from server.entities.message import Message
+from server.helpers.utility import write
 
 
 def require_args(n: int):
@@ -22,7 +22,7 @@ def require_args(n: int):
 def require_identity():
     def decorator(handler: Callable):
         async def wrapper(writer: StreamWriter, message: Message):
-            if writer not in clients:
+            if not registry.get(writer):
                 await write("IDENTITY_UNSET", writer)
                 return
 
@@ -36,7 +36,7 @@ def require_identity():
 def require_adminship():
     def decorator(handler: Callable):
         async def wrapper(writer: StreamWriter, message: Message):
-            if not clients[writer].admin:
+            if not registry.get(writer).admin:
                 await write("UNAUTHORIZED", writer)
                 return
 

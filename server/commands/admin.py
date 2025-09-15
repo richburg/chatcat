@@ -1,9 +1,10 @@
 import asyncio
 
+from server import bans
+from server.entities.client import registry
+from server.entities.message import Message
 from server.helpers.decorators import require_adminship, require_args, require_identity
-from server.helpers.utils import broadcast_message, find_client, get_ip, write
-from server.types import Message
-from server.variables import bans
+from server.helpers.utility import broadcast_message, get_ip, write
 
 
 @require_args(n=2)
@@ -12,7 +13,7 @@ from server.variables import bans
 async def handle_ban(writer: asyncio.StreamWriter, message: Message):
     target_nick = message.args[0]
     reason = message.args[1]
-    target_client = find_client(target_nick)
+    target_client = registry.get_by_nickname(target_nick)
 
     if not target_client:
         await write(f"CLIENT_UNKNOWN|{target_nick}", writer)
@@ -49,7 +50,7 @@ async def handle_unban(writer: asyncio.StreamWriter, message: Message):
 @require_adminship()
 async def handle_kick(writer: asyncio.StreamWriter, message: Message):
     target_nick = message.args[0]
-    target_client = find_client(target_nick)
+    target_client = registry.get_by_nickname(target_nick)
 
     if not target_client:
         await write(f"CLIENT_UNKNOWN|{target_nick}", writer)
