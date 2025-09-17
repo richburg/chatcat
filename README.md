@@ -1,5 +1,5 @@
 # chatcat
-Asynchronous and concurrent TCP chatting server using raw text for communication. There is no versioning because of its rolling-release nature.
+Asynchronous and concurrent TCP chatting server using raw text for communication.
 
 ## Configuration
 Edit `server/config.py`. The variables are highly self-documented with type annotations.
